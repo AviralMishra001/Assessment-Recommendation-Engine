@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Snowfall from "react-snowfall";
 
 type Assessment = {
@@ -12,11 +12,43 @@ type Assessment = {
   "URL": string;
 };
 
+const LOADING_STEPS = [
+  "🔹 Loading embedding model...",
+  "🔹 Reading CSV...",
+  "🔹 Loaded 138 assessments",
+  "🔹 Generating embeddings (one-time)...",
+  "✅ Assessment store ready",
+  "Finding best-matched assessments…"
+];
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Assessment[]>([]);
   const [error, setError] = useState("");
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [loadingStep, setLoadingStep] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (loading && isFirstLoad) {
+      // Simulate progress through loading steps
+      interval = setInterval(() => {
+        setLoadingStep((prev) => {
+          if (prev < LOADING_STEPS.length - 1) {
+            return prev + 1;
+          }
+          return prev;
+        });
+      }, 2000); // Change step every 2 seconds
+    } else if (loading && !isFirstLoad) {
+      // On subsequent loads, show final step immediately
+      setLoadingStep(LOADING_STEPS.length - 1);
+    }
+
+    return () => clearInterval(interval);
+  }, [loading, isFirstLoad]);
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
@@ -38,6 +70,9 @@ export default function Home() {
 
       const data = await res.json();
       setResults(data.recommendations || []);
+      if (data.wasFirstLoad) {
+        setIsFirstLoad(false);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -80,15 +115,29 @@ export default function Home() {
           )}
         </div>
 
+        {/* Loading Status with Progressive Steps */}
+        {loading && (
+          <div className="mt-6 rounded-xl bg-blue-50 border border-blue-200 p-5">
+            <div className="space-y-2">
+              {LOADING_STEPS.slice(0, loadingStep + 1).map((step, idx) => (
+                <div 
+                  key={idx}
+                  className={`text-sm transition-opacity duration-300 ${
+                    idx === loadingStep 
+                      ? 'text-blue-700 font-medium' 
+                      : 'text-blue-600'
+                  }`}
+                >
+                  {step}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Results */}
         <div className="mt-10 space-y-4">
-          {loading && (
-            <p className="text-sm text-gray-500">
-              Finding best-matched assessments…
-            </p>
-          )}
-
-          {!loading && results.length === 0 && (
+          {!loading && results.length === 0 && !error && (
             <p className="text-sm text-gray-500">
               No recommendations yet.
             </p>
