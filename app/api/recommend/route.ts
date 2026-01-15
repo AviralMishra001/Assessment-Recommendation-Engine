@@ -123,10 +123,13 @@ ${candidates
         : candidates.slice(0, 7);
 
     return NextResponse.json({ recommendations: finalResults });
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    console.error("API ERROR:", err);
     return NextResponse.json(
-      { error: "Internal error" },
+      { 
+        error: "Internal error",
+        message: err?.message || "Unknown error",
+      },
       { status: 500 }
     );
   }
