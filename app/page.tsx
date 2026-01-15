@@ -31,10 +31,12 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobDescription: input }),
       });
+      if (!res.ok){
+        const text = await res.text();
+        throw new Error(text || "Something went wrong")
+      }
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong");
-
       setResults(data.recommendations || []);
     } catch (err: any) {
       setError(err.message);
