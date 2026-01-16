@@ -1,22 +1,26 @@
-FROM node:18-slim
+FROM node:20-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install dependencies first (better caching)
+# Copy package files
 COPY package*.json ./
-RUN npm ci --only=production
 
-# Copy all project files
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci
+
+# Copy application code
 COPY . .
 
-# Build the Next.js app
+# Build the Next.js app (TypeScript still available)
 RUN npm run build
 
-# Expose Hugging Face port
+# NOW remove dev dependencies after build is complete
+RUN npm prune --production
+
+# Expose Hugging Face Spaces default port
 EXPOSE 7860
 
-# Set environment to production
+# Set environment variables
 ENV NODE_ENV=production
 ENV PORT=7860
 
