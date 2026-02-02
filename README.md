@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-Powered Assessment Recommendation Engine
+
+An intelligent system that analyzes job descriptions and recommends the most relevant SHL skill assessments using advanced NLP and semantic similarity matching.
+
+## Features
+
+- **Smart Job Analysis**: Processes job descriptions and LinkedIn URLs to extract key requirements
+- **AI-Powered Matching**: Uses sentence transformers and vector similarity to find relevant assessments
+- **Real-time Recommendations**: Fast processing with immediate results and progress feedback
+- **Clean Interface**: Intuitive web UI with assessment details and direct SHL links
+- **Comprehensive Catalog**: Access to 138+ SHL assessments across various skill categories
+
+## Tech Stack
+
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API routes with serverless functions
+- **AI/ML**: Xenova Transformers, OpenAI/Groq SDK for embeddings and reranking
+- **Data**: CSV-based assessment catalog with vector storage
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+2. **Set up environment variables**:
+   Create `.env.local` with your API keys:
+   ```
+   OPENAI_API_KEY=your_openai_key
+   GROQ_API_KEY=your_groq_key
+   ```
+
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Open the app**:
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Usage
+
+1. Paste a job description or LinkedIn job URL into the text area
+2. Click "Recommend Assessments" to analyze the content
+3. View AI-generated recommendations with relevance scores
+4. Click through to SHL for detailed assessment information
+
+## Project Structure
+
+```
+├── app/
+│   ├── api/recommend/     # Main recommendation API endpoint
+│   ├── page.tsx          # Main UI component
+│   └── layout.tsx        # App layout and styling
+├── data/
+│   └── shl.csv          # SHL assessment catalog
+├── lib/
+│   └── assessmentStore.ts # Data processing and ML logic
+└── requirements.md       # Detailed project requirements
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API Endpoints
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `POST /api/recommend` - Generate assessment recommendations from job descriptions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development
 
-## Learn More
+The app uses a progressive loading system that initializes the ML model and processes the assessment catalog on first use. Subsequent requests are much faster due to caching.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For detailed technical specifications, see `design.md` and `requirements.md`.
